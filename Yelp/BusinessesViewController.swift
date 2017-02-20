@@ -8,20 +8,25 @@
 
 import UIKit
 
-class BusinessesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    
+class BusinessesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
     @IBOutlet weak var tableView: UITableView!
     var businesses: [Business]!
-    
+    @IBOutlet weak var searchBar: UISearchBar!
+    var filteredData: [Business]!
+    var searchText = "Thai"
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 120
-        Business.searchWithTerm(term: "Thai", completion: { (businesses: [Business]?, error: Error?) -> Void in
+        //searchBar
+        searchBar.delegate = self
+        self.navigationItem.titleView = searchBar
+        Business.searchWithTerm(term: searchText, completion: { (businesses: [Business]?, error: Error?) -> Void in
             
             self.businesses = businesses
+            self.filteredData = self.businesses
             self.tableView.reloadData()
             if let businesses = businesses {
                 for business in businesses {
@@ -51,9 +56,9 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
         // Dispose of any resources that can be recreated.
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if businesses != nil
+        if filteredData != nil
         {
-            return businesses!.count
+            return filteredData!.count
         }else
         {
             return 0
@@ -61,8 +66,18 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "BusinessCell", for: indexPath) as! BusinessCell
-        cell.business = businesses[indexPath.row]
+        cell.business = filteredData[indexPath.row]
         return cell
+    }
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        self.searchText = searchBar.text! + " restaurant"
+        
+        // Perform Search with enteredText
+        Business.searchWithTerm(term: searchText, completion: { (businesses: [Business]?, error: Error?) -> Void in
+            self.filteredData = businesses
+        }
+        )
+        self.tableView.reloadData()
     }
     /*
      // MARK: - Navigation
