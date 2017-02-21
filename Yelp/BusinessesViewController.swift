@@ -22,7 +22,6 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
         tableView.estimatedRowHeight = 120
         //searchBar
         searchBar.delegate = self
-        searchBar.sizeToFit()
         self.navigationItem.titleView = searchBar
         Business.searchWithTerm(term: searchText, completion: { (businesses: [Business]?, error: Error?) -> Void in
             
@@ -93,10 +92,16 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
      // MARK: - Navigation
      
      // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+     */
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
      // Get the new view controller using segue.destinationViewController.
      // Pass the selected object to the new view controller.
-     }
-     */
+        let cell = sender as! UITableViewCell
+        let indexPath = tableView.indexPath(for: cell)
+        let business = filteredData![(indexPath?.row)!]
+        let detailViewController = segue.destination as! DetailViewController
+        detailViewController.business = business
+    }
+     /**/
     
 }
