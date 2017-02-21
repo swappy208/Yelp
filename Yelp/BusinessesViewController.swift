@@ -22,6 +22,7 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
         tableView.estimatedRowHeight = 120
         //searchBar
         searchBar.delegate = self
+        searchBar.sizeToFit()
         self.navigationItem.titleView = searchBar
         Business.searchWithTerm(term: searchText, completion: { (businesses: [Business]?, error: Error?) -> Void in
             
@@ -69,7 +70,7 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
         cell.business = filteredData[indexPath.row]
         return cell
     }
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+    /*func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         self.searchText = searchBar.text! + " restaurant"
         
         // Perform Search with enteredText
@@ -78,6 +79,15 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
         }
         )
         self.tableView.reloadData()
+    }*/
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchText = searchBar.text! + " restaurant"
+        // Perform Search with enteredText
+        Business.searchWithTerm(term: searchText, completion: { (businesses: [Business]?, error: Error?) -> Void in
+            self.filteredData = businesses
+            self.tableView.reloadData()
+        }
+        )
     }
     /*
      // MARK: - Navigation
